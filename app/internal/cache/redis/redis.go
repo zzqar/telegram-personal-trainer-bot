@@ -3,7 +3,7 @@ package redis
 import (
 	"context"
 	"github.com/redis/go-redis/v9"
-	"telegram-personal-trainer-bot/internal/config"
+	"telegram-personal-trainer-bot/app/internal/config"
 )
 
 type StateManager struct {
