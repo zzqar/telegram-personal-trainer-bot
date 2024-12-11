@@ -3,7 +3,7 @@ package redis
 import (
 	"context"
 	"github.com/redis/go-redis/v9"
-	"telegram-personal-trainer-bot/app/internal/config"
+	"telegram-personal-trainer-bot/internal/config"
 )
 
 type StateManager struct {
@@ -33,3 +33,9 @@ func (r *StateManager) Set(key, state string) error {
 func (r *StateManager) Get(key string) (string, error) {
 	return r.client.Get(r.ctx, key).Result()
 }
+
+//// GetInt
+//// Получить состояние пользователя
+//func (r *StateManager) GetInt(key string) (int, error) {
+//	return r.Get(key).Int()
+//}

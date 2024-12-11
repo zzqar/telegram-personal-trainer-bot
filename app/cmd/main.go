@@ -1,44 +1,32 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
+	tele "gopkg.in/telebot.v4"
+	"log"
+	"telegram-personal-trainer-bot/internal/bot/commands"
+	"telegram-personal-trainer-bot/internal/bot/middleware"
+	"telegram-personal-trainer-bot/internal/cache/redis"
+	"telegram-personal-trainer-bot/internal/client/telegram"
 	"telegram-personal-trainer-bot/internal/config"
 )
 
-//func main() {
-//	cfg := config.MustConfig()
-//	_ = redis.MustRedis(cfg.Redis)
-//
-//	pref := tele.Settings{
-//		Token:  cfg.Token,
-//		Poller: &tele.LongPoller{Timeout: 10 * time.Second},
-//	}
-//
-//	b, err := tele.NewBot(pref)
-//	if err != nil {
-//		log.Fatal(err)
-//		return
-//	}
-//
-//	b.Handle("/hello", func(c tele.Context) error {
-//		return c.Send("Hello!")
-//	})
-//
-//	b.Start()
-//}
-
-func handle(w http.ResponseWriter, r *http.Request) {
-	cfg := config.MustConfig()
-	fmt.Fprintf(w, "Hello, World! %s", cfg.Token)
-}
-
-//
-
 func main() {
-	http.HandleFunc("/", handle)
-	err := http.ListenAndServe(":8080", nil)
-	if err != nil {
-		return
+	cfg := config.MustConfig()
+	rds := redis.MustRedis(cfg.Redis)
+	b := telegram.MustBot(cfg.Token)
+
+	c := []tele.Command{
+		{Text: "start", Description: "Начать работу с ботом"},
+		{Text: "help", Description: "Получить помощь"},
+		{Text: "create", Description: "Создать что-то"},
 	}
+	if err := b.SetCommands(c); err != nil {
+		log.Fatalf("Ошибка установки команд: %v", err)
+	}
+
+	b.Use(middleware.OnlyMe(*cfg, *rds))
+
+	b.Handle("/start", commands.Start)
+
+	b.Start()
 }

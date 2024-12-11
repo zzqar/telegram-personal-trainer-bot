@@ -6,9 +6,10 @@ import (
 )
 
 type Config struct {
-	Env   string `env:"ENV" env-default:"prod"`
-	Token string `env:"TELEGRAM_TOKEN" env-required:"true"`
-	Redis Redis  `env-prefix:"REDIS_" env-required:"true"`
+	Env     string `env:"ENV" env-default:"prod"`
+	Token   string `env:"TELEGRAM_TOKEN" env-required:"true"`
+	AdminId int64  `env:"ADMIN_ID" env-required:"true"`
+	Redis   Redis  `env-prefix:"REDIS_" env-required:"true"`
 }
 
 type Redis struct {
